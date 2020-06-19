@@ -9,6 +9,30 @@ type Tuple interface {
 	tw() float64
 }
 
+func toMatrix(t Tuple) *Matrix {
+	return MakeMatrix([][]float64{{t.tx()}, {t.ty()}, {t.tz()}, {t.tw()}})
+}
+
+func (m *Matrix) toPoint() Point {
+	if m.numRows != 4 || m.numCols != 1 {
+		panic("Matrix must be of size (4,1)")
+	}
+	if m.get(3, 0) != 1.0 {
+		panic("Matrix[3,0] must == 1.0 to be a Point")
+	}
+	return Point{m.get(0, 0), m.get(1, 0), m.get(2, 0)}
+}
+
+func (m *Matrix) toVector() Vector {
+	if m.numRows != 4 || m.numCols != 1 {
+		panic("Matrix must be of size (4,1)")
+	}
+	if m.get(3, 0) != 0.0 {
+		panic("Matrix[3,0] must == 0.0 to be a Vector")
+	}
+	return Vector{m.get(0, 0), m.get(1, 0), m.get(2, 0)}
+}
+
 type Point struct {
 	x, y, z float64
 }

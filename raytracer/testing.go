@@ -9,7 +9,7 @@ import (
 
 func approxOpts() []cmp.Option {
 	return []cmp.Option{
-		cmpopts.EquateApprox(0, 0.000001),
+		cmpopts.EquateApprox(0, 0.0001),
 		cmp.AllowUnexported(Point{}, Vector{}, Matrix{}),
 	}
 }

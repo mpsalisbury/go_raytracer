@@ -60,6 +60,18 @@ func (m *Matrix) index(r, c int) int {
 	return c*m.numRows + r
 }
 
+func (m *Matrix) timesPoint(p Point) Point {
+	pm := toMatrix(p)
+	tpm := m.times(pm)
+	return tpm.toPoint()
+}
+
+func (m *Matrix) timesVector(v Vector) Vector {
+	vm := toMatrix(v)
+	tvm := m.times(vm)
+	return tvm.toVector()
+}
+
 func (m1 *Matrix) times(m2 *Matrix) *Matrix {
 	if m1.numCols != m2.numRows {
 		panic("matrix sizes are incompatible for multiply")
@@ -90,4 +102,70 @@ func (m *Matrix) transpose() *Matrix {
 	}
 
 	return t
+}
+
+func (m *Matrix) determinant() float64 {
+	if m.numRows != m.numCols {
+		panic("cannot compute determinant of non-square matrix")
+	}
+	if m.numRows == 2 {
+		return m.get(0, 0)*m.get(1, 1) - m.get(1, 0)*m.get(0, 1)
+	} else {
+		det := 0.0
+		for c := 0; c < m.numCols; c++ {
+			det += m.get(0, c) * m.cofactor(0, c)
+		}
+		return det
+	}
+}
+
+func (m *Matrix) isInvertible() bool {
+	return m.determinant() != 0.0
+}
+
+func (m *Matrix) inverse() *Matrix {
+	if !m.isInvertible() {
+		panic("cannot invert noninvertible matrix")
+	}
+
+	det := m.determinant()
+	i := MakeMatrixWithSize(m.numRows, m.numCols)
+	for r := 0; r < m.numRows; r++ {
+		for c := 0; c < m.numCols; c++ {
+			i.set(c, r, m.cofactor(r, c)/det)
+		}
+	}
+	return i
+
+}
+
+func (m *Matrix) submatrix(rr, rc int) *Matrix {
+	s := MakeMatrixWithSize(m.numRows-1, m.numCols-1)
+	for c := 0; c < m.numCols-1; c++ {
+		for r := 0; r < m.numRows-1; r++ {
+			// Skip one row/col if at or beyond removed row/col.
+			rowOffset := 0
+			if r >= rr {
+				rowOffset = 1
+			}
+			colOffset := 0
+			if c >= rc {
+				colOffset = 1
+			}
+			s.set(r, c, m.get(r+rowOffset, c+colOffset))
+		}
+	}
+	return s
+}
+
+func (m *Matrix) minor(r, c int) float64 {
+	return m.submatrix(r, c).determinant()
+}
+
+func (m *Matrix) cofactor(r, c int) float64 {
+	cof := m.minor(r, c)
+	if (r+c)%2 == 1 {
+		cof = -cof
+	}
+	return cof
 }
