@@ -1,6 +1,8 @@
 package raytracer
 
-import "math"
+import (
+  "math"
+)
 
 type Tuple interface {
 	tx() float64
@@ -13,113 +15,93 @@ func toMatrix(t Tuple) *Matrix {
 	return MakeMatrix([][]float64{{t.tx()}, {t.ty()}, {t.tz()}, {t.tw()}})
 }
 
-func (m *Matrix) toPoint() Point {
-	if m.numRows != 4 || m.numCols != 1 {
-		panic("Matrix must be of size (4,1)")
-	}
-	if m.get(3, 0) != 1.0 {
-		panic("Matrix[3,0] must == 1.0 to be a Point")
-	}
-	return Point{m.get(0, 0), m.get(1, 0), m.get(2, 0)}
-}
-
-func (m *Matrix) toVector() Vector {
-	if m.numRows != 4 || m.numCols != 1 {
-		panic("Matrix must be of size (4,1)")
-	}
-	if m.get(3, 0) != 0.0 {
-		panic("Matrix[3,0] must == 0.0 to be a Vector")
-	}
-	return Vector{m.get(0, 0), m.get(1, 0), m.get(2, 0)}
-}
-
 type Point struct {
-	x, y, z float64
+	X, Y, Z float64
 }
 
 func (p Point) tx() float64 {
-	return p.x
+	return p.X
 }
 
 func (p Point) ty() float64 {
-	return p.y
+	return p.Y
 }
 
 func (p Point) tz() float64 {
-	return p.z
+	return p.Z
 }
 
 func (p Point) tw() float64 {
 	return 1.0
 }
 
-func (p Point) plusVector(v Vector) Point {
-	return Point{p.x + v.x, p.y + v.y, p.z + v.z}
+func (p Point) PlusVector(v Vector) Point {
+	return Point{p.X + v.X, p.Y + v.Y, p.Z + v.Z}
 }
 
-func (p Point) minusVector(v Vector) Point {
-	return Point{p.x - v.x, p.y - v.y, p.z - v.z}
+func (p Point) MinusVector(v Vector) Point {
+	return Point{p.X - v.X, p.Y - v.Y, p.Z - v.Z}
 }
 
-func (p Point) minus(p2 Point) Vector {
-	return Vector{p.x - p2.x, p.y - p2.y, p.z - p2.z}
+func (p Point) Minus(p2 Point) Vector {
+	return Vector{p.X - p2.X, p.Y - p2.Y, p.Z - p2.Z}
 }
 
 type Vector struct {
-	x, y, z float64
+	X, Y, Z float64
 }
 
 func (v Vector) tx() float64 {
-	return v.x
+	return v.X
 }
 
 func (v Vector) ty() float64 {
-	return v.y
+	return v.Y
 }
 
 func (v Vector) tz() float64 {
-	return v.z
+	return v.Z
 }
 
 func (v Vector) tw() float64 {
 	return 0.0
 }
 
-func (v Vector) magnitude() float64 {
-	return math.Sqrt(v.dot(v))
+func (v Vector) Magnitude() float64 {
+	return math.Sqrt(v.Dot(v))
 }
 
-func (v Vector) norm() Vector {
-	return v.scale(1.0 / v.magnitude())
+func (v Vector) Norm() Vector {
+	return v.Scale(1.0 / v.Magnitude())
 }
 
-func (v Vector) scale(s float64) Vector {
-	return Vector{s * v.x, s * v.y, s * v.z}
+func (v Vector) Scale(s float64) Vector {
+	return Vector{s * v.X, s * v.Y, s * v.Z}
 }
 
-func (v Vector) negate() Vector {
-	return v.scale(-1.0)
+func (v Vector) Negate() Vector {
+	return v.Scale(-1.0)
 }
 
-func (v Vector) plusPoint(p Point) Point {
-	return Point{p.x + v.x, p.y + v.y, p.z + v.z}
+func (v Vector) PlusPoint(p Point) Point {
+	return Point{p.X + v.X, p.Y + v.Y, p.Z + v.Z}
 }
 
-func (v Vector) plus(v2 Vector) Vector {
-	return Vector{v.x + v2.x, v.y + v2.y, v.z + v2.z}
+func (v Vector) Plus(v2 Vector) Vector {
+	return Vector{v.X + v2.X, v.Y + v2.Y, v.Z + v2.Z}
 }
 
-func (v Vector) minus(v2 Vector) Vector {
-	return Vector{v.x - v2.x, v.y - v2.y, v.z - v2.z}
+func (v Vector) Minus(v2 Vector) Vector {
+	return Vector{v.X - v2.X, v.Y - v2.Y, v.Z - v2.Z}
 }
 
-func (v Vector) dot(v2 Vector) float64 {
-	return v.x*v2.x + v.y*v2.y + v.z*v2.z
+func (v Vector) Dot(v2 Vector) float64 {
+	return v.X*v2.X + v.Y*v2.Y + v.Z*v2.Z
 }
 
-func (v1 Vector) cross(v2 Vector) Vector {
-	x := v1.y*v2.z - v1.z*v2.y
-	y := v1.z*v2.x - v1.x*v2.z
-	z := v1.x*v2.y - v2.x*v1.y
+func (v1 Vector) Cross(v2 Vector) Vector {
+	x := v1.Y*v2.Z - v1.Z*v2.Y
+	y := v1.Z*v2.X - v1.X*v2.Z
+	z := v1.X*v2.Y - v2.X*v1.Y
 	return Vector{x, y, z}
 }

@@ -2,6 +2,7 @@ package raytracer
 
 import (
 	"fmt"
+	"math"
 	"testing"
 )
 
@@ -247,7 +248,7 @@ func TestMatrixTimes(t *testing.T) {
 		{16, 26, 46, 42},
 	})
 
-	got := m1.times(m2)
+	got := m1.Times(m2)
 	if !approxEq(got, want) {
 		t.Error(approxError(got, want))
 	}
@@ -263,7 +264,7 @@ func TestMatrixTimesPoint(t *testing.T) {
 	p := Point{1, 2, 3}
 	want := Point{18, 24, 33}
 
-	got := m.timesPoint(p)
+	got := m.TimesP(p)
 	if !approxEq(got, want) {
 		t.Error(approxError(got, want))
 	}
@@ -279,7 +280,7 @@ func TestMatrixTimesVector(t *testing.T) {
 	v := Vector{1, 2, 3}
 	want := Vector{14, 22, 32}
 
-	got := m.timesVector(v)
+	got := m.TimesV(v)
 	if !approxEq(got, want) {
 		t.Error(approxError(got, want))
 	}
@@ -292,7 +293,7 @@ func TestMatrixIdentity(t *testing.T) {
 		{2, 4, 8, 16},
 		{4, 8, 16, 32},
 	})
-	got, want := m.times(MakeMatrixIdentity(4)), m
+	got, want := m.Times(MakeIdentity()), m
 	if !approxEq(got, want) {
 		t.Error(approxError(got, want))
 	}
@@ -472,7 +473,7 @@ func TestMatrixMultiplyByInverse(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("Mtrx%d", i), func(t *testing.T) {
 			m := test.m
-			got, want := m.times(m.inverse()), MakeMatrixIdentity(m.numRows)
+			got, want := m.Times(m.inverse()), MakeIdentityWithSize(m.numRows)
 			if !approxEq(got, want) {
 				t.Errorf(approxError(got, want))
 			}
@@ -564,5 +565,173 @@ func TestMatrixCofactor(t *testing.T) {
 				t.Errorf("got %f; want %f", got, want)
 			}
 		})
+	}
+}
+
+func TestMatrixTranslatePoint(t *testing.T) {
+	tests := []struct {
+		xf   *Matrix
+		p    Point
+		want Point
+	}{
+		{
+			xf:   MakeTranslation(5, -3, 2),
+			p:    Point{-3, 4, 5},
+			want: Point{2, 1, 7},
+		},
+		{
+			xf:   MakeTranslation(5, -3, 2).inverse(),
+			p:    Point{-3, 4, 5},
+			want: Point{-8, 7, 3},
+		},
+	}
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("transform%d", i), func(t *testing.T) {
+			got, want := test.xf.TimesP(test.p), test.want
+			if !approxEq(got, want) {
+				t.Error(approxError(got, want))
+			}
+		})
+	}
+}
+
+func TestMatrixTranslateVector(t *testing.T) {
+	xf := MakeTranslation(5, -3, 2)
+	v := Vector{-3, 4, 5}
+	got, want := xf.TimesV(v), v
+	if !approxEq(got, want) {
+		t.Error(approxError(got, want))
+	}
+}
+
+func TestMatrixScalingPoint(t *testing.T) {
+	xf := MakeScaling(2, 3, 4)
+	p := Point{-4, 6, 8}
+	got, want := xf.TimesP(p), Point{-8, 18, 32}
+	if !approxEq(got, want) {
+		t.Error(approxError(got, want))
+	}
+}
+
+func TestMatrixScalingVector(t *testing.T) {
+	xf := MakeScaling(2, 3, 4)
+	v := Vector{-4, 6, 8}
+	got, want := xf.TimesV(v), Vector{-8, 18, 32}
+	if !approxEq(got, want) {
+		t.Error(approxError(got, want))
+	}
+}
+
+func TestMatrixRotationXPoint(t *testing.T) {
+	tests := []struct {
+		xf   *Matrix
+		p    Point
+		want Point
+	}{
+		{
+			xf:   MakeRotationX(math.Pi / 2),
+			p:    Point{0, 1, 0},
+			want: Point{0, 0, 1},
+		},
+		{
+			xf:   MakeRotationX(math.Pi / 4),
+			p:    Point{0, 1, 0},
+			want: Point{0, 1.0 / math.Sqrt(2), 1.0 / math.Sqrt(2)},
+		},
+		{
+			xf:   MakeRotationX(math.Pi / 4).inverse(),
+			p:    Point{0, 1, 0},
+			want: Point{0, 1.0 / math.Sqrt(2), -1.0 / math.Sqrt(2)},
+		},
+	}
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("xform%d", i), func(t *testing.T) {
+			got, want := test.xf.TimesP(test.p), test.want
+			if !approxEq(got, want) {
+				t.Error(approxError(got, want))
+			}
+		})
+	}
+}
+
+func TestMatrixRotationXVector(t *testing.T) {
+	xf := MakeRotationX(math.Pi / 2)
+	v := Vector{0, 1, 0}
+	got, want := xf.TimesV(v), Vector{0, 0, 1}
+	if !approxEq(got, want) {
+		t.Error(approxError(got, want))
+	}
+}
+
+func TestMatrixRotationYPoint(t *testing.T) {
+	tests := []struct {
+		xf   *Matrix
+		p    Point
+		want Point
+	}{
+		{
+			xf:   MakeRotationY(math.Pi / 2),
+			p:    Point{0, 0, 1},
+			want: Point{1, 0, 0},
+		},
+		{
+			xf:   MakeRotationY(math.Pi / 4),
+			p:    Point{0, 0, 1},
+			want: Point{1.0 / math.Sqrt(2), 0, 1.0 / math.Sqrt(2)},
+		},
+		{
+			xf:   MakeRotationY(math.Pi / 4).inverse(),
+			p:    Point{0, 0, 1},
+			want: Point{-1.0 / math.Sqrt(2), 0, 1.0 / math.Sqrt(2)},
+		},
+	}
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("xform%d", i), func(t *testing.T) {
+			got, want := test.xf.TimesP(test.p), test.want
+			if !approxEq(got, want) {
+				t.Error(approxError(got, want))
+			}
+		})
+	}
+}
+
+func TestMatrixRotationZPoint(t *testing.T) {
+	tests := []struct {
+		xf   *Matrix
+		p    Point
+		want Point
+	}{
+		{
+			xf:   MakeRotationZ(math.Pi / 2),
+			p:    Point{0, 1, 0},
+			want: Point{-1, 0, 0},
+		},
+		{
+			xf:   MakeRotationZ(math.Pi / 4),
+			p:    Point{0, 1, 0},
+			want: Point{-1.0 / math.Sqrt(2), 1.0 / math.Sqrt(2), 0},
+		},
+		{
+			xf:   MakeRotationZ(math.Pi / 4).inverse(),
+			p:    Point{0, 1, 0},
+			want: Point{1.0 / math.Sqrt(2), 1.0 / math.Sqrt(2), 0},
+		},
+	}
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("xform%d", i), func(t *testing.T) {
+			got, want := test.xf.TimesP(test.p), test.want
+			if !approxEq(got, want) {
+				t.Error(approxError(got, want))
+			}
+		})
+	}
+}
+
+func TestMatrixChaining(t *testing.T) {
+	xf := MakeIdentity().RotateX(math.Pi/2).Scale(5, 5, 5).Translate(10, 5, 7)
+	p := Point{1, 0, 1}
+	got, want := xf.TimesP(p), Point{15, 0, 7}
+	if !approxEq(got, want) {
+		t.Error(approxError(got, want))
 	}
 }

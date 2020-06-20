@@ -47,8 +47,8 @@ func TestVectorAsTuple(t *testing.T) {
 func TestVectorPlusPoint(t *testing.T) {
 	v := Vector{3.0, -2.0, 5.0}
 	p := Point{-2.0, 3.0, 1.0}
-	t.Run(fmt.Sprintf("%+v.plusPoint(%+v)", v, p), func(t *testing.T) {
-		got, want := v.plusPoint(p), Point{1.0, 1.0, 6.0}
+	t.Run(fmt.Sprintf("%+v.PlusPoint(%+v)", v, p), func(t *testing.T) {
+		got, want := v.PlusPoint(p), Point{1.0, 1.0, 6.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -58,8 +58,8 @@ func TestVectorPlusPoint(t *testing.T) {
 func TestVectorPlusVector(t *testing.T) {
 	v1 := Vector{3.0, -2.0, 5.0}
 	v2 := Vector{-2.0, 3.0, 1.0}
-	t.Run(fmt.Sprintf("%+v.plus(%+v)", v1, v2), func(t *testing.T) {
-		got, want := v1.plus(v2), Vector{1.0, 1.0, 6.0}
+	t.Run(fmt.Sprintf("%+v.Plus(%+v)", v1, v2), func(t *testing.T) {
+		got, want := v1.Plus(v2), Vector{1.0, 1.0, 6.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -69,8 +69,8 @@ func TestVectorPlusVector(t *testing.T) {
 func TestPointMinusPoint(t *testing.T) {
 	p1 := Point{3.0, 2.0, 1.0}
 	p2 := Point{5.0, 6.0, 7.0}
-	t.Run(fmt.Sprintf("%+v.minus(%+v)", p1, p2), func(t *testing.T) {
-		got, want := p1.minus(p2), Vector{-2.0, -4.0, -6.0}
+	t.Run(fmt.Sprintf("%+v.Minus(%+v)", p1, p2), func(t *testing.T) {
+		got, want := p1.Minus(p2), Vector{-2.0, -4.0, -6.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -80,8 +80,8 @@ func TestPointMinusPoint(t *testing.T) {
 func TestPointMinusVector(t *testing.T) {
 	p := Point{3.0, 2.0, 1.0}
 	v := Vector{5.0, 6.0, 7.0}
-	t.Run(fmt.Sprintf("%+v.minusVector(%+v)", p, v), func(t *testing.T) {
-		got, want := p.minusVector(v), Point{-2.0, -4.0, -6.0}
+	t.Run(fmt.Sprintf("%+v.MinusVector(%+v)", p, v), func(t *testing.T) {
+		got, want := p.MinusVector(v), Point{-2.0, -4.0, -6.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -91,8 +91,8 @@ func TestPointMinusVector(t *testing.T) {
 func TestVectorMinusVector(t *testing.T) {
 	v1 := Vector{3.0, 2.0, 1.0}
 	v2 := Vector{5.0, 6.0, 7.0}
-	t.Run(fmt.Sprintf("%+v.minus(%+v)", v1, v2), func(t *testing.T) {
-		got, want := v1.minus(v2), Vector{-2.0, -4.0, -6.0}
+	t.Run(fmt.Sprintf("%+v.Minus(%+v)", v1, v2), func(t *testing.T) {
+		got, want := v1.Minus(v2), Vector{-2.0, -4.0, -6.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -101,8 +101,8 @@ func TestVectorMinusVector(t *testing.T) {
 
 func TestVectorNegate(t *testing.T) {
 	v := Vector{1.0, -2.0, 3.0}
-	t.Run(fmt.Sprintf("%+v.negate()", v), func(t *testing.T) {
-		got, want := v.negate(), Vector{-1.0, 2.0, -3.0}
+	t.Run(fmt.Sprintf("%+v.Negate()", v), func(t *testing.T) {
+		got, want := v.Negate(), Vector{-1.0, 2.0, -3.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -111,8 +111,8 @@ func TestVectorNegate(t *testing.T) {
 
 func TestVectorScale(t *testing.T) {
 	v := Vector{1.0, -2.0, 3.0}
-	t.Run(fmt.Sprintf("%+v.scale(3.5)", v), func(t *testing.T) {
-		got, want := v.scale(3.5), Vector{3.5, -7.0, 10.5}
+	t.Run(fmt.Sprintf("%+v.Scale(3.5)", v), func(t *testing.T) {
+		got, want := v.Scale(3.5), Vector{3.5, -7.0, 10.5}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -146,8 +146,8 @@ func TestVectorMagnitude(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%+v.magnitude()", test.v), func(t *testing.T) {
-			got, want := test.v.magnitude(), test.want
+		t.Run(fmt.Sprintf("%+v.Magnitude()", test.v), func(t *testing.T) {
+			got, want := test.v.Magnitude(), test.want
 			if !approxEq(got, want) {
 				t.Error(approxError(got, want))
 			}
@@ -170,8 +170,8 @@ func TestVectorNorm(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%+v.norm()", test.v), func(t *testing.T) {
-			got, want := test.v.norm(), test.want
+		t.Run(fmt.Sprintf("%+v.Norm()", test.v), func(t *testing.T) {
+			got, want := test.v.Norm(), test.want
 			if !approxEq(got, want) {
 				t.Error(approxError(got, want))
 			}
@@ -182,8 +182,8 @@ func TestVectorNorm(t *testing.T) {
 func TestVectorDot(t *testing.T) {
 	v1 := Vector{1.0, 2.0, 3.0}
 	v2 := Vector{2.0, 3.0, 4.0}
-	t.Run(fmt.Sprintf("%+v.dot(%+v)", v1, v2), func(t *testing.T) {
-		got, want := v1.dot(v2), 20.0
+	t.Run(fmt.Sprintf("%+v.Dot(%+v)", v1, v2), func(t *testing.T) {
+		got, want := v1.Dot(v2), 20.0
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
@@ -208,8 +208,8 @@ func TestVectorCross(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%+v.cross(%+v)", test.v1, test.v2), func(t *testing.T) {
-			got, want := test.v1.cross(test.v2), test.want
+		t.Run(fmt.Sprintf("%+v.Cross(%+v)", test.v1, test.v2), func(t *testing.T) {
+			got, want := test.v1.Cross(test.v2), test.want
 			if !approxEq(got, want) {
 				t.Error(approxError(got, want))
 			}
