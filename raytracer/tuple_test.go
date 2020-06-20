@@ -44,18 +44,18 @@ func TestVectorAsTuple(t *testing.T) {
 	testValue("tw()", v.tw(), w)
 }
 
-func TestVectorPlusPoint(t *testing.T) {
+func TestVectorPlusP(t *testing.T) {
 	v := Vector{3.0, -2.0, 5.0}
 	p := Point{-2.0, 3.0, 1.0}
-	t.Run(fmt.Sprintf("%+v.PlusPoint(%+v)", v, p), func(t *testing.T) {
-		got, want := v.PlusPoint(p), Point{1.0, 1.0, 6.0}
+	t.Run(fmt.Sprintf("%+v.PlusP(%+v)", v, p), func(t *testing.T) {
+		got, want := v.PlusP(p), Point{1.0, 1.0, 6.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}
 	})
 }
 
-func TestVectorPlusVector(t *testing.T) {
+func TestVectorPlus(t *testing.T) {
 	v1 := Vector{3.0, -2.0, 5.0}
 	v2 := Vector{-2.0, 3.0, 1.0}
 	t.Run(fmt.Sprintf("%+v.Plus(%+v)", v1, v2), func(t *testing.T) {
@@ -77,11 +77,11 @@ func TestPointMinusPoint(t *testing.T) {
 	})
 }
 
-func TestPointMinusVector(t *testing.T) {
+func TestPointMinusV(t *testing.T) {
 	p := Point{3.0, 2.0, 1.0}
 	v := Vector{5.0, 6.0, 7.0}
-	t.Run(fmt.Sprintf("%+v.MinusVector(%+v)", p, v), func(t *testing.T) {
-		got, want := p.MinusVector(v), Point{-2.0, -4.0, -6.0}
+	t.Run(fmt.Sprintf("%+v.MinusV(%+v)", p, v), func(t *testing.T) {
+		got, want := p.MinusV(v), Point{-2.0, -4.0, -6.0}
 		if !approxEq(got, want) {
 			t.Error(approxError(got, want))
 		}

@@ -35,11 +35,11 @@ func (p Point) tw() float64 {
 	return 1.0
 }
 
-func (p Point) PlusVector(v Vector) Point {
+func (p Point) PlusV(v Vector) Point {
 	return Point{p.X + v.X, p.Y + v.Y, p.Z + v.Z}
 }
 
-func (p Point) MinusVector(v Vector) Point {
+func (p Point) MinusV(v Vector) Point {
 	return Point{p.X - v.X, p.Y - v.Y, p.Z - v.Z}
 }
 
@@ -83,7 +83,7 @@ func (v Vector) Negate() Vector {
 	return v.Scale(-1.0)
 }
 
-func (v Vector) PlusPoint(p Point) Point {
+func (v Vector) PlusP(p Point) Point {
 	return Point{p.X + v.X, p.Y + v.Y, p.Z + v.Z}
 }
 
