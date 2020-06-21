@@ -8,11 +8,13 @@ import (
 type Shape interface {
 	Intersect(r Ray) []Intersection
 	Xform() *Matrix
+	NormalAt(p Point) Vector
+	Material() *Material
 }
 
 type Intersection struct {
 	t   float64
-	obj Shape
+	Obj Shape
 }
 
 func IntersectionComparer() cmp.Option {
@@ -34,15 +36,22 @@ func hit(xs []Intersection) *Intersection {
 }
 
 type sphere struct {
-	xf *Matrix
+	xf       *Matrix
+	ixf      *Matrix
+	tixf     *Matrix
+	material *Material
 }
 
 func NewSphere(m *Matrix) Shape {
-	return &sphere{xf: m.Copy()}
+	xf := m.Copy()
+	ixf := xf.inverse()
+	tixf := ixf.transpose()
+	material := NewMaterial()
+	return &sphere{xf, ixf, tixf, material}
 }
 
 func (s *sphere) Intersect(r Ray) []Intersection {
-  xfray := r.xform(s.xf.inverse())
+	xfray := r.xform(s.xf.inverse())
 	sphereToRay := xfray.orig.Minus(Point{0, 0, 0})
 	a := xfray.dir.Dot(xfray.dir)
 	b := 2.0 * xfray.dir.Dot(sphereToRay)
@@ -61,4 +70,15 @@ func (s *sphere) Intersect(r Ray) []Intersection {
 
 func (s *sphere) Xform() *Matrix {
 	return s.xf
+}
+
+func (s *sphere) Material() *Material {
+	return s.material
+}
+
+func (s *sphere) NormalAt(worldPoint Point) Vector {
+	objectPoint := s.ixf.TimesP(worldPoint)
+	objectNormal := Vector{objectPoint.X, objectPoint.Y, objectPoint.Z}
+	worldNormal := s.tixf.TimesV(objectNormal)
+	return worldNormal.Norm()
 }

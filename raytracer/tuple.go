@@ -1,7 +1,7 @@
 package raytracer
 
 import (
-  "math"
+	"math"
 )
 
 type Tuple interface {
@@ -104,4 +104,8 @@ func (v1 Vector) Cross(v2 Vector) Vector {
 	y := v1.Z*v2.X - v1.X*v2.Z
 	z := v1.X*v2.Y - v2.X*v1.Y
 	return Vector{x, y, z}
+}
+
+func (v Vector) Reflect(normal Vector) Vector {
+	return v.Minus(normal.Scale(2.0 * v.Dot(normal)))
 }

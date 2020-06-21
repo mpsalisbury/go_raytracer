@@ -1,47 +1,72 @@
 package raytracer
 
 type Camera struct {
-  Width, Height int
+	Width, Height int
+}
+
+type Shader interface {
+	ColorAt(s Shape, r Ray) Color
+}
+
+type PrimitiveShader struct{}
+
+func (ps PrimitiveShader) ColorAt(s Shape, r Ray) Color {
+	if hit(s.Intersect(r)) != nil {
+		return Red()
+	}
+	return Black()
+}
+
+type lightShader struct {
+	L Light
+}
+
+func NewLightShader() Shader {
+	l := NewPointLight(Point{-10, 10, -10}, White())
+	return lightShader{l}
+}
+
+func (ls lightShader) ColorAt(s Shape, r Ray) Color {
+	x := hit(s.Intersect(r))
+	if x == nil {
+		return Black()
+	}
+
+	point := r.position(x.t)
+	return Lighting(x.Obj.Material(), ls.L, point, r.dir.Negate(), s.NormalAt(point))
 }
 
 // Renders a view of the given World onto a canvas of the configured
 // size using the configured camera view.
-func (cam Camera) Render(s Shape) *Canvas {
-  c := MakeCanvas(cam.Width, cam.Height)
-  for y := 0; y < c.Height; y++ {
-    for x := 0; x < c.Width; x++ {
-      c.Set(x, y, colorAt(s, cam.rayForPixel(x,y)))
-    }
-  }
-  return c
+func (cam Camera) Render(s Shape, shader Shader) *Canvas {
+	c := MakeCanvas(cam.Width, cam.Height)
+	for y := 0; y < c.Height; y++ {
+		for x := 0; x < c.Width; x++ {
+			c.Set(x, y, shader.ColorAt(s, cam.rayForPixel(x, y)))
+		}
+	}
+	return c
 }
 
-func colorAt(s Shape, r Ray) Color {
-  if hit(s.Intersect(r)) != nil {
-    return Red()
-  }
-  return Black()
-}
-
-func (cam Camera) rayForPixel(x,y int) Ray {
-  cameraPos := Point{0, 0, -4}
-  filmPoint := cam.filmPointForPixel(x, y);
-  direction := filmPoint.Minus(cameraPos).Norm();
-  return Ray{cameraPos, direction}
+func (cam Camera) rayForPixel(x, y int) Ray {
+	cameraPos := Point{0, 0, -4}
+	filmPoint := cam.filmPointForPixel(x, y)
+	direction := filmPoint.Minus(cameraPos).Norm()
+	return Ray{cameraPos, direction}
 }
 
 // pixels [0..hPixels-1, 0..vPixels-1] map onto film of fieldOfView.
 // Film is at z=0, width and height set by fieldOfView from camera at origin.
 func (cam Camera) filmPointForPixel(x, y int) Point {
-  pZ := 0.0
-  pixelScale := 4.0/float64(cam.Width)
-  middleX := float64(cam.Width - 1) / 2.0
-  middleY := float64(cam.Height- 1) / 2.0
+	pZ := 0.0
+	pixelScale := 4.0 / float64(cam.Width)
+	middleX := float64(cam.Width-1) / 2.0
+	middleY := float64(cam.Height-1) / 2.0
 
-  pX := (float64(x) - middleX) * pixelScale
-  pY := (float64(cam.Height - 1 - y) - middleY) * pixelScale
+	pX := (float64(x) - middleX) * pixelScale
+	pY := (float64(cam.Height-1-y) - middleY) * pixelScale
 
-  return Point{pX, pY, pZ}
+	return Point{pX, pY, pZ}
 }
 
 /*

@@ -38,7 +38,7 @@ func (m *Matrix) Copy() *Matrix {
 	for i := 0; i < len(m.val); i++ {
 		m2.val[i] = m.val[i]
 	}
-  return m2
+	return m2
 }
 
 func MakeIdentity() *Matrix {
@@ -169,6 +169,7 @@ func (m *Matrix) TimesP(p Point) Point {
 func (m *Matrix) TimesV(v Vector) Vector {
 	vm := toMatrix(v)
 	tvm := m.Times(vm)
+	tvm.set(3, 0, 0) // ugly hack
 	return tvm.toVector()
 }
 

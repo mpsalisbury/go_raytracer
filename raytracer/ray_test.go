@@ -39,32 +39,31 @@ func TestRayAtT(t *testing.T) {
 }
 
 func TestRayXform(t *testing.T) {
-  tests := []struct {
-    name string
-    r Ray
-    xf *Matrix
-    want Ray
-  }{
-    {
-      name: "translate",
-      r: Ray{Point{1,2,3}, Vector{0,1,0}},
-      xf: MakeTranslation(3,4,5),
-      want: Ray{Point{4,6,8}, Vector{0,1,0}},
-    },
-    {
-      name: "scale",
-      r: Ray{Point{1,2,3}, Vector{0,1,0}},
-      xf: MakeScaling(2,3,4),
-      want: Ray{Point{2,6,12}, Vector{0,3,0}},
-    },
-  }
-  for _, test := range tests {
-    t.Run(test.name, func (t *testing.T) {
-      got, want := test.r.xform(test.xf), test.want
+	tests := []struct {
+		name string
+		r    Ray
+		xf   *Matrix
+		want Ray
+	}{
+		{
+			name: "translate",
+			r:    Ray{Point{1, 2, 3}, Vector{0, 1, 0}},
+			xf:   MakeTranslation(3, 4, 5),
+			want: Ray{Point{4, 6, 8}, Vector{0, 1, 0}},
+		},
+		{
+			name: "scale",
+			r:    Ray{Point{1, 2, 3}, Vector{0, 1, 0}},
+			xf:   MakeScaling(2, 3, 4),
+			want: Ray{Point{2, 6, 12}, Vector{0, 3, 0}},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got, want := test.r.xform(test.xf), test.want
 			if !approxEq(got, want) {
 				t.Errorf("got %f; want %f", got, want)
 			}
 		})
 	}
 }
-

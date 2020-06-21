@@ -3,7 +3,7 @@ package raytracer
 import "image/color"
 
 type Color struct {
-	r, g, b float64
+	R, G, B float64
 }
 
 func Black() Color {
@@ -20,9 +20,9 @@ func Red() Color {
 
 func (c Color) asNRGBA() color.NRGBA {
 	return color.NRGBA{
-		R: to255(c.r),
-		G: to255(c.g),
-		B: to255(c.b),
+		R: to255(c.R),
+		G: to255(c.G),
+		B: to255(c.B),
 		A: 255,
 	}
 }
@@ -38,17 +38,17 @@ func to255(c float64) uint8 {
 }
 
 func (c1 Color) plus(c2 Color) Color {
-	return Color{c1.r + c2.r, c1.g + c2.g, c1.b + c2.b}
+	return Color{c1.R + c2.R, c1.G + c2.G, c1.B + c2.B}
 }
 
 func (c1 Color) minus(c2 Color) Color {
-	return Color{c1.r - c2.r, c1.g - c2.g, c1.b - c2.b}
+	return Color{c1.R - c2.R, c1.G - c2.G, c1.B - c2.B}
 }
 
 func (c1 Color) times(c2 Color) Color {
-	return Color{c1.r * c2.r, c1.g * c2.g, c1.b * c2.b}
+	return Color{c1.R * c2.R, c1.G * c2.G, c1.B * c2.B}
 }
 
 func (c Color) scale(s float64) Color {
-	return Color{s * c.r, s * c.g, s * c.b}
+	return Color{s * c.R, s * c.G, s * c.B}
 }

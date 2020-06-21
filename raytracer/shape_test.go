@@ -1,6 +1,9 @@
 package raytracer
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestSphereDefaultTransform(t *testing.T) {
 	s := NewSphere(MakeIdentity())
@@ -156,6 +159,60 @@ func TestHit(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			got, want := hit(test.xs), test.want
+			if !approxEq(got, want) {
+				t.Errorf(approxError(got, want))
+			}
+		})
+	}
+}
+
+func TestSphereNormalAt(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Shape
+		p    Point
+		want Vector
+	}{
+		{
+			name: "on x axis",
+			s:    NewSphere(MakeIdentity()),
+			p:    Point{1, 0, 0},
+			want: Vector{1, 0, 0},
+		},
+		{
+			name: "on y axis",
+			s:    NewSphere(MakeIdentity()),
+			p:    Point{0, 1, 0},
+			want: Vector{0, 1, 0},
+		},
+		{
+			name: "on z axis",
+			s:    NewSphere(MakeIdentity()),
+			p:    Point{0, 0, 1},
+			want: Vector{0, 0, 1},
+		},
+		{
+			name: "on nonaxial point",
+			s:    NewSphere(MakeIdentity()),
+			p:    Point{math.Sqrt(3) / 3.0, math.Sqrt(3) / 3.0, math.Sqrt(3) / 3.0},
+			want: Vector{math.Sqrt(3) / 3.0, math.Sqrt(3) / 3.0, math.Sqrt(3) / 3.0},
+		},
+		{
+			name: "on translated sphere",
+			s:    NewSphere(MakeTranslation(0, 1, 0)),
+			p:    Point{0, 1.70711, -0.70711},
+			want: Vector{0, 0.70711, -0.70711},
+		},
+		{
+			name: "on transformed sphere",
+			s:    NewSphere(MakeRotationZ(math.Pi/5).Scale(1, 0.5, 1)),
+			p:    Point{0, 0.70711, -0.70711},
+			want: Vector{0, 0.97014, -0.24254},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got, want := test.s.NormalAt(test.p), test.want
 			if !approxEq(got, want) {
 				t.Errorf(approxError(got, want))
 			}

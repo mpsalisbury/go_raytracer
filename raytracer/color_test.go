@@ -50,38 +50,37 @@ func TestColorScale(t *testing.T) {
 }
 
 func TestAs255(t *testing.T) {
-  tests := []struct {
-    c float64
-    want uint8
-  }{
-    {
-      c: 0.0,
-      want: 0,
-    },
-    {
-      c: 1.0,
-      want: 255,
-    },
-    {
-      c: -0.1,
-      want: 0,
-    },
-    {
-      c: 1.1,
-      want: 255,
-    },
-    {
-      c: 0.5,
-      want: 127,
-    },
-  }
-  for _, test := range tests {
-    t.Run(fmt.Sprintf("Color %f", test.c), func(t *testing.T) {
-      got, want := to255(test.c), test.want
-      if got != want {
-        t.Errorf("got %d, want %d", got, want)
-      }
-    })
-  }
+	tests := []struct {
+		c    float64
+		want uint8
+	}{
+		{
+			c:    0.0,
+			want: 0,
+		},
+		{
+			c:    1.0,
+			want: 255,
+		},
+		{
+			c:    -0.1,
+			want: 0,
+		},
+		{
+			c:    1.1,
+			want: 255,
+		},
+		{
+			c:    0.5,
+			want: 127,
+		},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("Color %f", test.c), func(t *testing.T) {
+			got, want := to255(test.c), test.want
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
+			}
+		})
+	}
 }
-

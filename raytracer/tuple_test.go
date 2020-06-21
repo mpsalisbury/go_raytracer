@@ -216,3 +216,33 @@ func TestVectorCross(t *testing.T) {
 		})
 	}
 }
+
+func TestVectorReflect(t *testing.T) {
+	tests := []struct {
+		name   string
+		v      Vector
+		normal Vector
+		want   Vector
+	}{
+		{
+			name:   "approaching at 45",
+			v:      Vector{1, -1, 0},
+			normal: Vector{0, 1, 0},
+			want:   Vector{1, 1, 0},
+		},
+		{
+			name:   "off slanted surface",
+			v:      Vector{0, -1, 0},
+			normal: Vector{0.70711, 0.70711, 0},
+			want:   Vector{1, 0, 0},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got, want := test.v.Reflect(test.normal), test.want
+			if !approxEq(got, want) {
+				t.Error(approxError(got, want))
+			}
+		})
+	}
+}
