@@ -3,7 +3,7 @@ package raytracer
 import "testing"
 
 func TestSphereDefaultTransform(t *testing.T) {
-	s := NewSphere()
+	s := NewSphere(MakeIdentity())
 	got, want := s.Xform(), MakeIdentity()
 	if !approxEq(got, want) {
 		t.Errorf(approxError(got, want))
@@ -11,9 +11,8 @@ func TestSphereDefaultTransform(t *testing.T) {
 }
 
 func TestSphereSetTransform(t *testing.T) {
-	s := NewSphere()
 	xf := MakeTranslation(2, 3, 4)
-	s.SetXform(xf)
+	s := NewSphere(xf)
 	got, want := s.Xform(), xf
 	if !approxEq(got, want) {
 		t.Errorf(approxError(got, want))
@@ -21,7 +20,7 @@ func TestSphereSetTransform(t *testing.T) {
 }
 
 func TestSphereIntersection(t *testing.T) {
-	s := NewSphere()
+	s := NewSphere(MakeIdentity())
 
 	tests := []struct {
 		name string
@@ -103,8 +102,7 @@ func TestTransformedSphereIntersection(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			s := NewSphere()
-			s.SetXform(test.xf)
+			s := NewSphere(test.xf)
 			got, want := s.Intersect(test.r), test.want
 			if !approxEq(got, want) {
 				t.Errorf(approxError(got, want))
@@ -114,7 +112,7 @@ func TestTransformedSphereIntersection(t *testing.T) {
 }
 
 func TestHit(t *testing.T) {
-	s := NewSphere()
+	s := NewSphere(MakeIdentity())
 	tests := []struct {
 		name string
 		xs   []Intersection

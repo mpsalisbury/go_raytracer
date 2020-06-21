@@ -7,9 +7,7 @@ import (
 
 type Shape interface {
 	Intersect(r Ray) []Intersection
-
 	Xform() *Matrix
-	SetXform(m *Matrix)
 }
 
 type Intersection struct {
@@ -39,8 +37,8 @@ type sphere struct {
 	xf *Matrix
 }
 
-func NewSphere() Shape {
-	return &sphere{xf: MakeIdentity()}
+func NewSphere(m *Matrix) Shape {
+	return &sphere{xf: m.Copy()}
 }
 
 func (s *sphere) Intersect(r Ray) []Intersection {
@@ -63,8 +61,4 @@ func (s *sphere) Intersect(r Ray) []Intersection {
 
 func (s *sphere) Xform() *Matrix {
 	return s.xf
-}
-
-func (s *sphere) SetXform(m *Matrix) {
-	s.xf = m.Copy()
 }
