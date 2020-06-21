@@ -33,6 +33,14 @@ func MakeMatrixWithSize(rows, cols int) *Matrix {
 	return m
 }
 
+func (m *Matrix) Copy() *Matrix {
+	m2 := MakeMatrixWithSize(m.numRows, m.numCols)
+	for i := 0; i < len(m.val); i++ {
+		m2.val[i] = m.val[i]
+	}
+  return m2
+}
+
 func MakeIdentity() *Matrix {
 	return MakeIdentityWithSize(4)
 }

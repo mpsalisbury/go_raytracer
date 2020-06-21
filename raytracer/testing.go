@@ -10,7 +10,8 @@ import (
 func approxOpts() []cmp.Option {
 	return []cmp.Option{
 		cmpopts.EquateApprox(0, 0.0001),
-		cmp.AllowUnexported(Point{}, Vector{}, Color{}, Matrix{}, Intersection{}, Ray{}),
+		cmp.AllowUnexported(Point{}, Vector{}, Color{}, Matrix{}, Ray{}),
+    IntersectionComparer(),
 	}
 }
 
