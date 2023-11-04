@@ -7,7 +7,9 @@ type Shader interface {
 type PrimitiveShader struct{}
 
 func (ps PrimitiveShader) ColorAt(s Shape, r Ray) Color {
-	if hit(s.Intersect(r)) != nil {
+  mxs := s.Intersect(r)
+  xs := Intersections(mxs)
+	if hit(xs) != nil {
 		return Red()
 	}
 	return Black()
@@ -23,11 +25,13 @@ func NewLightShader() Shader {
 }
 
 func (ls lightShader) ColorAt(s Shape, r Ray) Color {
-	x := hit(s.Intersect(r))
+  mxs := s.Intersect(r)
+  xs := Intersections(mxs)
+	x := hit(xs)
 	if x == nil {
 		return Black()
 	}
 
 	point := r.position(x.t)
-	return Lighting(x.Obj.Material(), ls.L, point, r.dir.Negate(), s.NormalAt(point))
+	return Lighting(x.material, ls.L, point, r.dir.Negate(), s.NormalAt(point))
 }

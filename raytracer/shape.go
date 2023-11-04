@@ -5,7 +5,7 @@ import (
 )
 
 type Shape interface {
-	Intersect(r Ray) []Intersection
+	Intersect(r Ray) []MaterialIntersection
 	Xform() *Matrix
 	NormalAt(p Point) Vector
 	Material() *Material
@@ -26,7 +26,17 @@ func NewSphere(m *Matrix) Shape {
 	return &sphere{xf, ixf, tixf, material}
 }
 
-func (s *sphere) Intersect(r Ray) []Intersection {
+func (s *sphere) Intersect(r Ray) []MaterialIntersection {
+  var xs []MaterialIntersection
+  for _, t := range s.intersectPoints(r) {
+    p := r.position(t)
+    normalV := s.NormalAt(p)
+    xs := append(xs, NewMaterialIntersection(r, t, normalV, s.material))
+  }
+  return xs
+}
+
+func (s *sphere) intersectPoints(r Ray) []float64 {
 	xfray := r.xform(s.xf.inverse())
 	sphereToRay := xfray.orig.Minus(Point{0, 0, 0})
 	a := xfray.dir.Dot(xfray.dir)
@@ -34,14 +44,11 @@ func (s *sphere) Intersect(r Ray) []Intersection {
 	c := sphereToRay.Dot(sphereToRay) - 1
 	disc := b*b - 4*a*c
 	if disc < 0 {
-		return []Intersection{}
+		return []float64{}
 	}
 	t1 := (-b - math.Sqrt(disc)) / (2 * a)
 	t2 := (-b + math.Sqrt(disc)) / (2 * a)
-	return []Intersection{
-		Intersection{t1, s},
-		Intersection{t2, s},
-	}
+	return []float64{t1, t2}
 }
 
 func (s *sphere) Xform() *Matrix {

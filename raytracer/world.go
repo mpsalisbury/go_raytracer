@@ -17,7 +17,7 @@ type world struct {
 	lights []Light
 }
 
-func (w *world) Intersect(r Ray) []Intersection {
+func (w *world) Intersect(r Ray) []MaterialIntersection {
 	xs := []Intersection{}
 	for _, s := range w.shapes {
 		xs = append(xs, s.Intersect(r)...)

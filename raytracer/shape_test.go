@@ -34,16 +34,16 @@ func TestSphereIntersection(t *testing.T) {
 			name: "ray hits sphere",
 			r:    Ray{Point{0, 0, -5}, Vector{0, 0, 1}},
 			want: []Intersection{
-				Intersection{4, s},
-				Intersection{6, s},
+				NewIntersection(4, s),
+				NewIntersection(6, s),
 			},
 		},
 		{
 			name: "ray tangent to sphere",
 			r:    Ray{Point{0, 1, -5}, Vector{0, 0, 1}},
 			want: []Intersection{
-				Intersection{5, s},
-				Intersection{5, s},
+				NewIntersection(5, s),
+				NewIntersection(5, s),
 			},
 		},
 		{
@@ -55,16 +55,16 @@ func TestSphereIntersection(t *testing.T) {
 			name: "ray inside sphere",
 			r:    Ray{Point{0, 0, 0}, Vector{0, 0, 1}},
 			want: []Intersection{
-				Intersection{-1, s},
-				Intersection{1, s},
+				NewIntersection(-1, s),
+				NewIntersection(1, s),
 			},
 		},
 		{
 			name: "sphere behind ray",
 			r:    Ray{Point{0, 0, 5}, Vector{0, 0, 1}},
 			want: []Intersection{
-				Intersection{-6, s},
-				Intersection{-4, s},
+				NewIntersection(-6, s),
+				NewIntersection(-4, s),
 			},
 		},
 	}
@@ -91,8 +91,8 @@ func TestTransformedSphereIntersection(t *testing.T) {
 			r:    Ray{Point{0, 0, -5}, Vector{0, 0, 1}},
 			xf:   MakeScaling(2, 2, 2),
 			want: []Intersection{
-				Intersection{3, nil},
-				Intersection{7, nil},
+				NewIntersection(3, nil),
+				NewIntersection(7, nil),
 			},
 		},
 		{
@@ -124,36 +124,36 @@ func TestHit(t *testing.T) {
 		{
 			name: "all positive",
 			xs: []Intersection{
-				Intersection{1, s},
-				Intersection{2, s},
+				NewIntersection(1, s),
+				NewIntersection(2, s),
 			},
-			want: &Intersection{1, s},
+			want: NewIntersectionP(1, s),
 		},
 		{
 			name: "some positive, some negative",
 			xs: []Intersection{
-				Intersection{-1, s},
-				Intersection{1, s},
+				NewIntersection(-1, s),
+				NewIntersection(1, s),
 			},
-			want: &Intersection{1, s},
+			want: NewIntersectionP(1, s),
 		},
 		{
 			name: "all negative",
 			xs: []Intersection{
-				Intersection{-2, s},
-				Intersection{-1, s},
+				NewIntersection(-2, s),
+				NewIntersection(-1, s),
 			},
 			want: nil,
 		},
 		{
 			name: "lowest non-negative",
 			xs: []Intersection{
-				Intersection{5, s},
-				Intersection{7, s},
-				Intersection{-3, s},
-				Intersection{2, s},
+				NewIntersection(5, s),
+				NewIntersection(7, s),
+				NewIntersection(-3, s),
+				NewIntersection(2, s),
 			},
-			want: &Intersection{2, s},
+			want: NewIntersectionP(2, s),
 		},
 	}
 	for _, test := range tests {

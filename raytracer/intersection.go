@@ -5,12 +5,50 @@ import (
 	"math"
 )
 
-type Intersection struct {
-	t   float64
-	Obj Shape
+// The raw intersection returned by intersect().
+type MaterialIntersection struct {
+  ray Ray
+  t float64
+  normalV Vector
+  material *Material
 }
 
-func IntersectionComparer() cmp.Option {
+func NewMaterialIntersection(r Ray, t float64, normalV Vector, m *Material) MaterialIntersection {
+	return MaterialIntersection{r, t, normalV, m}
+}
+
+func Intersections(mxs []MaterialIntersection) []Intersection {
+  xs := []Intersection{}
+  for _, mx := range mxs {
+    xs = append(xs, NewIntersection(mx))
+  }
+  return xs
+}
+
+// An intersection with additional computed values.
+type Intersection struct {
+	t float64
+	point   Point
+	eyeV    Vector
+	normalV Vector
+  inside bool
+  material *Material
+}
+
+func NewIntersection(mi MaterialIntersection) Intersection {
+  point := mi.ray.position(mi.t)
+  eyeV := mi.ray.dir.Negate()
+  normalV := mi.normalV
+  inside := false
+  if normalV.Dot(eyeV) < 0.0 {
+    inside = true
+    normalV = normalV.Negate()
+  }
+
+	return Intersection{mi.t, point, eyeV, normalV, inside, mi.material}
+}
+
+func IntersectionTComparer() cmp.Option {
 	return cmp.Comparer(func(x, y Intersection) bool { return x.t == y.t })
 }
 
